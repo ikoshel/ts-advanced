@@ -118,6 +118,14 @@ class Student {
     get fullName(): string {
         return `${this._firstName} ${this._lastName}`;
     }
+
+    setGrade(subject: string, grade: number): void {
+        this._grades.set(subject, grade);
+    }
+
+    setVisit(visitNumber: number, attended: boolean): void {
+        this._visits.set(visitNumber, attended);
+    }
 }
 
 class Lecturer {

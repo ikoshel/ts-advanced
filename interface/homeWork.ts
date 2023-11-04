@@ -40,10 +40,24 @@ interface IErrorResponseData {
     errorCode: number;
 }
 
-interface IApiResponse<T> {
-    status: 'success' | 'failed';
-    data: T;
+interface IApiResponseSuccess {
+    status: 'success';
+    data: ISuccessResponseData;
 }
 
-type SuccessResponse = IApiResponse<ISuccessResponseData>;
-type ErrorResponse = IApiResponse<IErrorResponseData>;
+interface IApiResponseError {
+    status: 'failed';
+    data: IErrorResponseData;
+}
+
+type IApiResponse = IApiResponseSuccess | IApiResponseError;
+
+
+// Added a restriction, now there will be an error if you use unrelated types of status and data
+const resp: IApiResponse<IErrorResponseData> = {
+    status: "success",
+    data: {
+        errorMessage: "",
+        errorCode: 1,
+    }
+}

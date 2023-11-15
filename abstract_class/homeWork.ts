@@ -1,3 +1,7 @@
+interface IPrintable {
+    print(): void;
+}
+
 abstract class Shape {
     readonly name: string;
     readonly color: string;
@@ -23,7 +27,7 @@ class Circle extends Shape {
     }
 }
 
-class Rectangle extends Shape {
+class Rectangle extends Shape implements IPrintable {
     width: number;
     height: number;
 
@@ -42,7 +46,7 @@ class Rectangle extends Shape {
     }
 }
 
-class Square extends Rectangle {
+class Square extends Rectangle implements IPrintable {
 
     constructor(name: string, color: string, side: number) {
         super(name, color, side, side);

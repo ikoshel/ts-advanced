@@ -10,9 +10,9 @@ interface IPaymentInfo {
 }
 
 class Employee {
-    private _name: string;
-    private _surname: string;
-    private _paymentInfo: IPaymentInfo;
+    private readonly _name: string;
+    private readonly _surname: string;
+    private readonly _paymentInfo: IPaymentInfo;
     private _status: Status;
 
     constructor(name: string, surname: string, paymentInfo: IPaymentInfo, status: Status = Status.ACTIVE) {

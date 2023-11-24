@@ -1,8 +1,8 @@
 class Department {
-    private _name: string;
-    private _domain: string;
+    private readonly _name: string;
+    private readonly _domain: string;
     private _employees: Employee[] = [];
-    private _budget: {
+    private readonly _budget: {
         debit: number;
         credit: number;
     };

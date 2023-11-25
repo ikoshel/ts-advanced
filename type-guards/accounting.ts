@@ -5,6 +5,11 @@ class Accounting extends Department {
         this._balance = this.budget.debit - this.budget.credit;
     }
 
+    processPayroll(): void {
+        const activeEmployees = this.employees.filter(e => e.status === Status.ACTIVE);
+        activeEmployees.forEach(e => this._balance -= e.paymentInfo.salary);
+    }
+
     paySalaries(): void {
         this.employees.forEach(employee => {
             if (employee.status === Status.ACTIVE) {

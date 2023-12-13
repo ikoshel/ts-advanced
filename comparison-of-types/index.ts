@@ -1,12 +1,11 @@
 // Task 1
 type DeepReadonly<T> = {
-    readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K];
+    readonly [key in keyof T]: DeepReadonly<T[key]>
 }
 
 // Task 2
-type DeepRequireReadonly<T> = {
-    readonly [K in keyof Required<T>]: Required<T>[K] extends Record<string, unknown>
-        ? DeepRequireReadonly<Required<T>[K]>: Required<T>[K];
+type DeepRequiredReadonly<T> = {
+    readonly [key in keyof T]-?: DeepRequiredReadonly<T[key]>
 }
 
 // Task 3
@@ -26,6 +25,6 @@ interface User {
 }
 
 type MyReadonlyUser = DeepReadonly<User>;
-type MyDeepRequireReadonlyUser = DeepRequireReadonly<User>;
+type MyDeepRequireReadonlyUser = DeepRequiredReadonly<User>;
 type MyUpperCaseKeysUser = UpperCaseKeys<User>;
 type MyPickUser = TPick<User, 'name' | 'age'>;

@@ -2,22 +2,30 @@ import Note from './note';
 import DefaultNote from './defaultNote';
 import ConfirmableNote from './confirmableNote';
 
+enum SortType {
+    ByDate = "By creation date",
+    ByStatus = "By status"
+}
+
 class NoteList {
-    private readonly notes: Note[];
+    private readonly _notes: Note[];
 
     constructor() {
-        this.notes = [];
+        this._notes = [];
+    }
+
+    get notes(): Note[] {
+        return this._notes;
     }
 
     add(note: Note) {
-        this.notes.push(note);
+        this._notes.push(note);
     }
 
     edit(id: string, title: string, content: string) {
-        const note = this.notes.find(note => note.id === id);
+        const note = this._notes.find(note => note.id === id);
         if (!note) {
-            console.log('Note not found.');
-            return;
+            throw new Error('Note not found.');
         }
 
         note.title = title;
@@ -25,67 +33,72 @@ class NoteList {
     }
 
     delete(id: string) {
-        const index = this.notes.findIndex(note => note.id === id);
+        const index = this._notes.findIndex(note => note.id === id);
         if (index === -1) {
-            console.log('Note not found.');
-            return;
+            throw new Error('Note not found.');
         }
 
-        this.notes.splice(index, 1);
+        this._notes.splice(index, 1);
     }
 
-    view(id: string) {
-        const note = this.notes.find(note => note.id === id);
+    view(id: string): Note {
+        const note = this._notes.find(note => note.id === id);
         if (!note) {
-            console.log('Note not found.');
-            return;
+            throw new Error('Note not found.');
         }
 
-        console.log(note);
+        return note;
     }
 
     viewAll() {
-        console.log(this.notes);
+        return [...this._notes];
     }
 
     markAsDone(id: string) {
-        const note = this.notes.find(note => note.id === id);
+        const note = this._notes.find(note => note.id === id);
         if (!note) {
-            console.log('Note not found.');
-            return;
+            throw new Error('Note not found.');
         }
 
-        if (note instanceof ConfirmableNote) {
+        if (isConfirmable(note)) {
             note.confirm();
         } else {
-            console.log('This note cannot be confirmed.');
+            throw new Error('This note cannot be confirmed.');
         }
     }
 
     getStats() {
-        const defaultNotes = this.notes.filter(note => note instanceof DefaultNote).length;
-        const confirmableNotes = this.notes.filter(note => note instanceof ConfirmableNote).length;
-        const confirmedNotes = this.notes.filter(note => note instanceof ConfirmableNote && note.confirmed).length;
+        const defaultNotes = this._notes.filter(note => note instanceof DefaultNote).length;
+        const confirmableNotes = this._notes.filter(note => note instanceof ConfirmableNote).length;
+        const confirmedNotes = this._notes.filter(note => note instanceof ConfirmableNote && note.confirmed).length;
 
-        console.log(`Default notes: ${defaultNotes}`);
-        console.log(`Confirmable notes: ${confirmableNotes}`);
-        console.log(`Confirmed notes: ${confirmedNotes}`);
+        return {
+            defaultNotes,
+            confirmableNotes,
+            confirmedNotes
+        }
     }
 
     search(query: string) {
-        const results = this.notes.filter(note => note.title.includes(query) || note.content.includes(query));
-        console.log(results);
+        return this._notes.filter(note => note.title.includes(query) || note.content.includes(query));
     }
 
-    sort(type: string) {
-        if (type === 'By creation date') {
-            this.notes.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-        } else if (type === 'By status') {
-            this.notes.sort((a) => (a instanceof ConfirmableNote && a.confirmed ? -1 : 1));
+    sort(type: SortType) {
+        switch (type) {
+            case SortType.ByDate:
+                this._notes.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+                break;
+            case SortType.ByStatus:
+                this._notes.sort((a) => isConfirmable(a) && a.confirmed ? -1 : 1);
+                break;
+            default:
+                throw new Error(`Unknown sort type: ${type}`);
         }
-
-        console.log(this.notes);
     }
+}
+
+function isConfirmable(note: Note): note is ConfirmableNote {
+    return note instanceof ConfirmableNote;
 }
 
 export default NoteList;
